@@ -26,7 +26,7 @@ public class Sprite {
 		this.yPosition = yPosition;
 	}
 
-	public void setXPosition(int newX, int panelWidth) {
+	public void setxPosition(int newX, int panelWidth) {
 		xPosition = newX;
 
 		if (xPosition < 0) {
@@ -36,7 +36,7 @@ public class Sprite {
 		}
 	}
 
-	public void setYPosition(int newY, int panelHeight) {
+	public void setyPosition(int newY, int panelHeight) {
 		yPosition = newY;
 
 		if (yPosition < 0) {

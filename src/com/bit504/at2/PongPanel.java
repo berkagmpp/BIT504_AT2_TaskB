@@ -17,6 +17,7 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 
 	private final static Color BACKGROUND_COLOUR = Color.BLACK;
 	private final static int TIMER_DELAY = 5;
+	private final static int BALL_MOVEMENT_SPEED = 2;
 
 	GameState gameState = GameState.INITIALISING;
 
@@ -58,9 +59,13 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 		case INITIALISING: {
 			createObjects();
 			gameState = GameState.PLAYING;
+			ball.setxVelocity(BALL_MOVEMENT_SPEED);
+			ball.setyVelocity(BALL_MOVEMENT_SPEED);
 			break;
 		}
 		case PLAYING: {
+			moveObject(ball); // Move ball
+			checkWallBounce(); // Check for wall bounce
 			break;
 		}
 		case GAMEOVER: {
@@ -94,5 +99,29 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 		g2d.setPaint(Color.WHITE);
 		g2d.drawLine(getWidth() / 2, 0, getWidth() / 2, getHeight());
 		g2d.dispose();
+	}
+
+	private void moveObject(Sprite obj) {
+		obj.setxPosition(obj.getxPosition() + obj.getxVelocity(), getWidth());
+		obj.setyPosition(obj.getyPosition() + obj.getyVelocity(), getHeight());
+	}
+
+	private void checkWallBounce() {
+		if (ball.getxPosition() <= 0) {
+			// Hit left side of screen
+			ball.setxVelocity(-ball.getxVelocity());
+		} else if (ball.getxPosition() >= getWidth() - ball.getWidth()) {
+			// Hit right side of screen
+			ball.setxVelocity(-ball.getxVelocity());
+		}
+
+		if (ball.getyPosition() <= 0 || ball.getyPosition() >= getHeight() - ball.getHeight()) {
+			// Hit top or bottom of screen
+			ball.setyVelocity(-ball.getyVelocity());
+		}
+	}
+
+	private void resetBall() {
+		ball.resetToInitialPosition();
 	}
 }
