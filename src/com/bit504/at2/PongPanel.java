@@ -28,14 +28,36 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 		setBackground(BACKGROUND_COLOUR);
 		Timer timer = new Timer(TIMER_DELAY, this);
 		timer.start();
+
+		addKeyListener(this);
+		setFocusable(true);
+
 	}
 
 	@Override
 	public void keyPressed(KeyEvent event) {
+		if (event.getKeyCode() == KeyEvent.VK_W) {
+			paddle1.setyVelocity(-1);
+		} else if (event.getKeyCode() == KeyEvent.VK_S) {
+			paddle1.setyVelocity(1);
+		}
+
+		if (event.getKeyCode() == KeyEvent.VK_UP) {
+			paddle2.setyVelocity(-1);
+		} else if (event.getKeyCode() == KeyEvent.VK_DOWN) {
+			paddle2.setyVelocity(1);
+		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent event) {
+		if (event.getKeyCode() == KeyEvent.VK_W || event.getKeyCode() == KeyEvent.VK_S) {
+			paddle1.setyVelocity(0);
+		}
+
+		if (event.getKeyCode() == KeyEvent.VK_UP || event.getKeyCode() == KeyEvent.VK_DOWN) {
+			paddle2.setyVelocity(0);
+		}
 	}
 
 	@Override
@@ -64,6 +86,8 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 			break;
 		}
 		case PLAYING: {
+			moveObject(paddle1);
+			moveObject(paddle2);
 			moveObject(ball); // Move ball
 			checkWallBounce(); // Check for wall bounce
 			break;
