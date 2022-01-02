@@ -25,7 +25,7 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 	private final static int RESTART_BUTTON_WIDTH = 170;
 	private final static int RESTART_BUTTON_HIEGHT = 50;
 
-	private final static int POINTS_TO_WIN = 1;
+	private final static int POINTS_TO_WIN = 3;
 	int player1Score = 0, player2Score = 0;
 
 	private final static int WINNER_TEXT_X = 200;
@@ -53,6 +53,14 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent event) {
+		if (event.getKeyCode() == KeyEvent.VK_SPACE) {
+			if (gameState == GameState.READY || gameState == GameState.PAUSE) {
+				gameState = GameState.PLAYING;
+			} else if (gameState == GameState.PLAYING) {
+				gameState = GameState.PAUSE;
+			}
+		}
+		
 		if (event.getKeyCode() == KeyEvent.VK_W) {
 			paddle1.setyVelocity(-1);
 		} else if (event.getKeyCode() == KeyEvent.VK_S) {
@@ -68,10 +76,6 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 
 	@Override
 	public void keyReleased(KeyEvent event) {
-		if (event.getKeyCode() == KeyEvent.VK_SPACE) {
-			gameState = GameState.PLAYING;
-		}
-
 		if (event.getKeyCode() == KeyEvent.VK_W || event.getKeyCode() == KeyEvent.VK_S) {
 			paddle1.setyVelocity(0);
 		}
