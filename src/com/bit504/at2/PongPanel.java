@@ -21,6 +21,7 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 	private final static Color BACKGROUND_COLOUR = Color.BLACK;
 	private final static int TIMER_DELAY = 5;
 	private final static int BALL_MOVEMENT_SPEED = 2;
+	private final static int PADDLE_VELOCITY = 3;
 
 	private final static int RESTART_BUTTON_WIDTH = 170;
 	private final static int RESTART_BUTTON_HIEGHT = 50;
@@ -53,16 +54,24 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent event) {
+		if (event.getKeyCode() == KeyEvent.VK_SPACE) {
+			if (gameState == GameState.READY || gameState == GameState.PAUSE) {
+				gameState = GameState.PLAYING;
+			} else if (gameState == GameState.PLAYING) {
+				gameState = GameState.PAUSE;
+			}
+		}
+		
 		if (event.getKeyCode() == KeyEvent.VK_W) {
-			paddle1.setyVelocity(-1);
+			paddle1.setyVelocity(-PADDLE_VELOCITY);
 		} else if (event.getKeyCode() == KeyEvent.VK_S) {
-			paddle1.setyVelocity(1);
+			paddle1.setyVelocity(PADDLE_VELOCITY);
 		}
 
 		if (event.getKeyCode() == KeyEvent.VK_UP) {
-			paddle2.setyVelocity(-1);
+			paddle2.setyVelocity(-PADDLE_VELOCITY);
 		} else if (event.getKeyCode() == KeyEvent.VK_DOWN) {
-			paddle2.setyVelocity(1);
+			paddle2.setyVelocity(PADDLE_VELOCITY);
 		}
 	}
 
@@ -107,7 +116,7 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 		switch (gameState) {
 		case INITIALISING: {
 			createObjects();
-			gameState = GameState.PLAYING;
+			gameState = GameState.READY;
 			ball.setxVelocity(BALL_MOVEMENT_SPEED);
 			ball.setyVelocity(BALL_MOVEMENT_SPEED);
 			break;
@@ -164,9 +173,16 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		paintDottedLine(g);
 
-		if (gameState != GameState.INITIALISING) {
+		if (gameState == GameState.READY) {
+			int xPadding = getWidth() / 2 - 270;
+			int yPadding = getHeight() / 2;
+			Font introFont = new Font(Font.DIALOG, Font.PLAIN, 40);
+			g.setFont(introFont);
+			g.setColor(Color.WHITE);
+			g.drawString("Please enter the Spacebar key", xPadding, yPadding);
+		} else if (gameState != GameState.INITIALISING) {
+			paintDottedLine(g);
 			paintSprite(g, ball);
 			paintSprite(g, paddle1);
 			paintSprite(g, paddle2);
