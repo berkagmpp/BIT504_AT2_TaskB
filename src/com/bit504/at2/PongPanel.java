@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -19,6 +21,9 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 	private final static Color BACKGROUND_COLOUR = Color.BLACK;
 	private final static int TIMER_DELAY = 5;
 	private final static int BALL_MOVEMENT_SPEED = 2;
+
+	private final static int RESTART_BUTTON_WIDTH = 170;
+	private final static int RESTART_BUTTON_HIEGHT = 50;
 
 	private final static int POINTS_TO_WIN = 3;
 	int player1Score = 0, player2Score = 0;
@@ -35,6 +40,8 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 	Paddle paddle1, paddle2;
 	Player gameWinner;
 
+	JButton restartButton;
+
 	public PongPanel() {
 		setBackground(BACKGROUND_COLOUR);
 		Timer timer = new Timer(TIMER_DELAY, this);
@@ -42,7 +49,6 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 
 		addKeyListener(this);
 		setFocusable(true);
-
 	}
 
 	@Override
@@ -80,6 +86,16 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 
 		paddle1 = new Paddle(Player.One, getWidth(), getHeight());
 		paddle2 = new Paddle(Player.Two, getWidth(), getHeight());
+
+		// Add button to the Panel and add Listener to the button
+		restartButton = new JButton("Restart the Game");
+		restartButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gameState = GameState.RESTART;
+			}
+		});
+
+		this.add(restartButton);
 	}
 
 	private void paintSprite(Graphics g, Sprite sprite) {
@@ -96,6 +112,17 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 			ball.setyVelocity(BALL_MOVEMENT_SPEED);
 			break;
 		}
+		case RESTART: {
+			// Display the restart button
+			restartButton.setVisible(false);
+			// Reset game winner and scores
+			resetWinAndScores();
+			// Reset ball
+			resetBall();
+			// Change the state
+			gameState = GameState.PLAYING;
+			break;
+		}
 		case PLAYING: {
 			moveObject(paddle1);
 			moveObject(paddle2);
@@ -106,6 +133,9 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 			break;
 		}
 		case GAMEOVER: {
+			restartButton.setBounds(getWidth() / 2 - (RESTART_BUTTON_WIDTH / 2),
+					getHeight() / 2 - (RESTART_BUTTON_HIEGHT / 2), RESTART_BUTTON_WIDTH, RESTART_BUTTON_HIEGHT);
+			restartButton.setVisible(true);
 			break;
 		}
 		}
@@ -207,6 +237,12 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 		} else if (player == Player.Two) {
 			player2Score++;
 		}
+	}
+
+	private void resetWinAndScores() {
+		gameWinner = null;
+		player1Score = 0;
+		player2Score = 0;
 	}
 
 	private void paintWinner(Graphics g) {
