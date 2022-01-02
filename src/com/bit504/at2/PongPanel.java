@@ -25,7 +25,7 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 	private final static int RESTART_BUTTON_WIDTH = 170;
 	private final static int RESTART_BUTTON_HIEGHT = 50;
 
-	private final static int POINTS_TO_WIN = 3;
+	private final static int POINTS_TO_WIN = 1;
 	int player1Score = 0, player2Score = 0;
 
 	private final static int WINNER_TEXT_X = 200;
@@ -68,6 +68,10 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 
 	@Override
 	public void keyReleased(KeyEvent event) {
+		if (event.getKeyCode() == KeyEvent.VK_SPACE) {
+			gameState = GameState.PLAYING;
+		}
+
 		if (event.getKeyCode() == KeyEvent.VK_W || event.getKeyCode() == KeyEvent.VK_S) {
 			paddle1.setyVelocity(0);
 		}
@@ -107,7 +111,7 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 		switch (gameState) {
 		case INITIALISING: {
 			createObjects();
-			gameState = GameState.PLAYING;
+			gameState = GameState.READY;
 			ball.setxVelocity(BALL_MOVEMENT_SPEED);
 			ball.setyVelocity(BALL_MOVEMENT_SPEED);
 			break;
@@ -164,9 +168,16 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		paintDottedLine(g);
 
-		if (gameState != GameState.INITIALISING) {
+		if (gameState == GameState.READY) {
+			int xPadding = getWidth() / 2 - 270;
+			int yPadding = getHeight() / 2;
+			Font introFont = new Font(Font.DIALOG, Font.PLAIN, 40);
+			g.setFont(introFont);
+			g.setColor(Color.WHITE);
+			g.drawString("Please enter the Spacebar key", xPadding, yPadding);
+		} else if (gameState != GameState.INITIALISING) {
+			paintDottedLine(g);
 			paintSprite(g, ball);
 			paintSprite(g, paddle1);
 			paintSprite(g, paddle2);
